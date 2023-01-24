@@ -17,7 +17,15 @@ const createRoleDAO = async (role) => {
   return resp[0]
 }
 
+const deleteRoleDAO = async (id) => {
+  const resp = await db('public.roles')
+    .where('id', id)
+    .del()
+  return resp
+}
+
 module.exports = {
   getAllRolesDAO,
-  createRoleDAO
+  createRoleDAO,
+  deleteRoleDAO
 }
