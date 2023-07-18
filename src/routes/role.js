@@ -1,6 +1,6 @@
 const { Router } = require('express')
 
-const { getAllRoles, createRole, deleteRole, updateRole } = require('../controller/role')
+const { getAllRoles, createRole, deleteRole, updateRole,  } = require('../controller/role')
 
 const router = Router()
 
