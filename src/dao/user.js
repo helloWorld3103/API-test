@@ -25,10 +25,10 @@ const createUserDAO = async (username, password, email, salt) => {
 
 const checkExistingUserOrEmail = async (username, email) => {
   const result = await db.raw(`select count (*) from users where username = '${username}' or email = '${email}' `)
-  if (result.rows[0].count == 0) {
-    return false
-  } else {
+  if (result.rows[0].count > 0) {
     return true
+  } else {
+    return false
   }
 }
 module.exports = {

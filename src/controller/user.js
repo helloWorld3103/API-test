@@ -14,21 +14,17 @@ const getAllUsers = async (req, res) => {
 
 const createUser = async (req, res) => {
   try {
-    const user = req.body.user
-    const FirstPassword = req.body.password
-    const email = req.body.email
-    const check = await checkExistingUserOrEmail(user, email)
-    if (check == false) {
+    const { user, password: FirstPassword, email } = req.body;
+    //Es necesario el await para el funcionamiento de la funcion
+    if (await checkExistingUserOrEmail(user, email) === false) {
       //se genera el salt
       const salt = await bcrypt.genSalt(10);
-      //se concatena con la contrasena
-      const PaswordAndSalt = FirstPassword + salt
       // se crea el hash de la conquetacion
-      const password = await bcrypt.hash(PaswordAndSalt, 10);
+      const password = await bcrypt.hash(FirstPassword, salt);
       const users = await createUserService(user, password, email, salt)
       res.status(200).json(users)
     } else {
-      res.status(400).json('El usuario o el correo ya existe')
+      res.status(400).json('the user or email already exist')
     }
   } catch (error) {
     console.log(error)
