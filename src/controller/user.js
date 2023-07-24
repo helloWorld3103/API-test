@@ -1,6 +1,8 @@
-const { getAllUsersService, createUserService } = require('../service/user')
-const { checkExistingUserOrEmail } = require('../dao/user')
+const { getAllUsersService, createUserService, loginUserService } = require('../service/user')
+const { checkExistingUserOrEmail, passwordCompare } = require('../dao/user')
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
 
 const getAllUsers = async (req, res) => {
   try {
@@ -32,7 +34,31 @@ const createUser = async (req, res) => {
   }
 }
 
+const loginUser = async (req, res) => {
+  try {
+    const { user, password: FirstPassword, email } = req.body;
+    if (await checkExistingUserOrEmail(user, email) === true) {
+      if (await passwordCompare(FirstPassword, user, email) === true) {
+        const payload = {
+          user
+        };
+        const secretKey = 'mi_clave_secreta';
+        const token = jwt.sign(payload, secretKey);
+        res.status(200).json({token,message:'you are login'})
+      } else {
+        res.status(400).json('the user or email are incorrect')
+      }
+    } else {
+      res.status(400).json('the user or email does not exists')
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
 module.exports = {
   getAllUsers,
-  createUser
+  createUser,
+  loginUser
 }
