@@ -2,6 +2,8 @@ const { getAllUsersService, createUserService, loginUserService } = require('../
 const { checkExistingUserOrEmail, passwordCompare } = require('../dao/user')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+
 
 
 const getAllUsers = async (req, res) => {
@@ -42,14 +44,14 @@ const loginUser = async (req, res) => {
         const payload = {
           user
         };
-        const secretKey = 'mi_clave_secreta';
+        const secretKey = crypto.randomBytes(32).toString('hex');
         const token = jwt.sign(payload, secretKey);
-        res.status(200).json({token,message:'you are login'})
+        res.status(200).json({ token, message: 'you are login' })
       } else {
         res.status(400).json('the user or email are incorrect')
       }
     } else {
-      res.status(400).json('the user or email does not exists')
+      res.status(400).json('Invalid credentials')
     }
   } catch (error) {
     console.log(error)

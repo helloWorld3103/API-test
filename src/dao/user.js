@@ -40,12 +40,9 @@ const checkExistingUserOrEmail = async (username, email) => {
   return result.rows[0].count > 0
 }
 
-const  passwordCompare = async(IntroducePassword,username, email) => {
+const passwordCompare = async (IntroducePassword, username, email) => {
   const result = await db.raw(`select password from users where username = '${username}' or email = '${email}' `)
-  console.log('pruebaaa',result.rows[0].password)
-  console.log('prueba 2',IntroducePassword)
-	return bcrypt.compare(IntroducePassword, result.rows[0].password);
-  
+  return bcrypt.compare(IntroducePassword, result.rows[0].password);
 }
 
 module.exports = {
