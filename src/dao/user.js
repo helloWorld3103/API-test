@@ -12,14 +12,13 @@ const getAllUsersDAO = async () => {
   return roles
 }
 
-const createUserDAO = async (username, password, email, salt) => {
+const createUserDAO = async (username, password, email) => {
   const resp = await db('public.users')
     .returning(['id'])
     .insert({
       username,
       password,
-      email,
-      salt
+      email
     })
   return resp[0]
 }

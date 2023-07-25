@@ -25,7 +25,7 @@ const createUser = async (req, res) => {
       const salt = await bcrypt.genSalt(10);
       // se crea el hash de la conquetacion
       const password = await bcrypt.hash(FirstPassword, salt);
-      const users = await createUserService(user, password, email, salt)
+      const users = await createUserService(user, password, email)
       res.status(200).json(users)
     } else {
       res.status(400).json('the user or email already exists')
