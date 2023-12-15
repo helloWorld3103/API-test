@@ -2,9 +2,7 @@ const { getAllUsersService, createUserService, loginUserService } = require('../
 const { checkExistingUserOrEmail, passwordCompare } = require('../dao/user')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const env = require('dotenv').config();
-const crypto = require('crypto');
-
+require('dotenv').config();
 
 
 const getAllUsers = async (req, res) => {
@@ -45,8 +43,7 @@ const loginUser = async (req, res) => {
         const payload = {
           user
         };
-        const secretKey = crypto.randomBytes(32).toString('hex');
-        process.env.SECRET_KEY = secretKey;
+        const secretKey = process.env.SECRET_KEY;
         const token = jwt.sign(payload, secretKey);
         res.status(200).json({ token, message: 'you are login' })
       } else {
