@@ -1,6 +1,9 @@
-const { getAllUsersService, createUserService } = require('../service/user')
-const { checkExistingUserOrEmail } = require('../dao/user')
+const { getAllUsersService, createUserService, loginUserService } = require('../service/user')
+const { checkExistingUserOrEmail, passwordCompare } = require('../dao/user')
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
 
 const getAllUsers = async (req, res) => {
   try {
@@ -21,7 +24,7 @@ const createUser = async (req, res) => {
       const salt = await bcrypt.genSalt(10);
       // se crea el hash de la conquetacion
       const password = await bcrypt.hash(FirstPassword, salt);
-      const users = await createUserService(user, password, email, salt)
+      const users = await createUserService(user, password, email)
       res.status(200).json(users)
     } else {
       res.status(400).json('the user or email already exists')
@@ -32,7 +35,31 @@ const createUser = async (req, res) => {
   }
 }
 
+const loginUser = async (req, res) => {
+  try {
+    const { user, password: FirstPassword, email } = req.body;
+    if (await checkExistingUserOrEmail(user, email) === true) {
+      if (await passwordCompare(FirstPassword, user, email) === true) {
+        const payload = {
+          user
+        };
+        const secretKey = process.env.SECRET_KEY;
+        const token = jwt.sign(payload, secretKey);
+        res.status(200).json({ token, message: 'you are login' })
+      } else {
+        res.status(400).json('the user or email are incorrect')
+      }
+    } else {
+      res.status(400).json('Invalid credentials')
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
 module.exports = {
   getAllUsers,
-  createUser
+  createUser,
+  loginUser
 }
